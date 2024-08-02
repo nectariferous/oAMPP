@@ -1,41 +1,71 @@
-# oAMPP - XAMPP UAC Warn solution
-# Run this script as administrator
+<#
+.SYNOPSIS
+    oAMPP - XAMPP UAC Warn Solution
+.DESCRIPTION
+    This script fixes the XAMPP UAC warning by modifying the EnableLUA registry value.
+    It also provides additional tools and information for XAMPP users.
+.NOTES
+    Version:        1.0
+    Author:         VorTexCyberBD
+    Creation Date:  2024-08-02
+    License:        MIT
+#>
 
-function Show-Animation {
-    param ($text)
-    $text.ToCharArray() | ForEach-Object {
-        Write-Host $_ -NoNewline
-        Start-Sleep -Milliseconds 50
+# Require administrator privileges
+if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
+    Write-Warning "Please run this script as an Administrator!"
+    Break
+}
+
+# Import required modules
+Import-Module BitsTransfer
+
+# Function to display animated text
+function Show-AnimatedText {
+    param (
+        [string]$Text,
+        [int]$DelayMS = 30,
+        [string]$ForegroundColor = "Cyan"
+    )
+    $Text.ToCharArray() | ForEach-Object {
+        Write-Host $_ -NoNewline -ForegroundColor $ForegroundColor
+        Start-Sleep -Milliseconds $DelayMS
     }
-    Write-Host ""
+    Write-Host
 }
 
-function Open-Telegram {
-    Start-Process "https://t.me/VorTexCyberBD"
+# Function to create a progress bar
+function Show-Progress {
+    param (
+        [int]$Percentage
+    )
+    $progressBar = "[" + ("=" * ($Percentage / 2)) + (" " * ((100 - $Percentage) / 2)) + "]"
+    Write-Host -NoNewline "`r$progressBar $Percentage%" -ForegroundColor Yellow
 }
 
-# Animated intro
-Show-Animation "Welcome to oAMPP - The XAMPP UAC Warn solution!"
-Show-Animation "Developed by Apache Friends and enhanced by VorTexCyberBD"
+# Main script execution
+Clear-Host
+Show-AnimatedText "Welcome to oAMPP - The Ultimate XAMPP UAC Warn Solution!" -ForegroundColor Magenta
+Show-AnimatedText "Developed by Apache Friends, enhanced by VorTexCyberBD" -ForegroundColor Green
 
 $registryPath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System"
 $name = "EnableLUA"
 
-# Check current value
+Show-AnimatedText "Checking current EnableLUA value..." -ForegroundColor Cyan
+for ($i = 0; $i -le 100; $i += 10) {
+    Show-Progress -Percentage $i
+    Start-Sleep -Milliseconds 100
+}
+Write-Host
+
 $currentValue = (Get-ItemProperty -Path $registryPath -Name $name).$name
 
-Show-Animation "Checking current EnableLUA value..."
-Start-Sleep -Seconds 1
-
 if ($currentValue -eq 1) {
-    Show-Animation "EnableLUA is currently set to 1. Changing to 0..."
-    
-    # Set the new value
+    Show-AnimatedText "EnableLUA is currently set to 1. Changing to 0..." -ForegroundColor Yellow
     Set-ItemProperty -Path $registryPath -Name $name -Value 0
-    
-    Show-Animation "EnableLUA has been set to 0. Please restart your computer for changes to take effect."
+    Show-AnimatedText "EnableLUA has been set to 0. Please restart your computer for changes to take effect." -ForegroundColor Green
 } else {
-    Show-Animation "EnableLUA is already set to 0. No changes needed."
+    Show-AnimatedText "EnableLUA is already set to 0. No changes needed." -ForegroundColor Green
 }
 
 # Create registry file
@@ -48,7 +78,7 @@ Windows Registry Editor Version 5.00
 
 $regContent | Out-File -FilePath "oAMPP_UAC_Fix.reg" -Encoding ASCII
 
-Show-Animation "Created oAMPP_UAC_Fix.reg file for manual fixing."
+Show-AnimatedText "Created oAMPP_UAC_Fix.reg file for manual fixing." -ForegroundColor Cyan
 
 # Create batch file for easy execution
 $batchContent = @"
@@ -59,10 +89,16 @@ pause
 
 $batchContent | Out-File -FilePath "Run_oAMPP_UAC_Fix.bat" -Encoding ASCII
 
-Show-Animation "Created Run_oAMPP_UAC_Fix.bat for easy execution."
+Show-AnimatedText "Created Run_oAMPP_UAC_Fix.bat for easy execution." -ForegroundColor Cyan
 
-Show-Animation "Opening Telegram channel..."
-Open-Telegram
+# Download XAMPP configuration guide
+$url = "https://www.apachefriends.org/xampp-files/8.2.4/xampp-windows-x64-8.2.4-0-VS16-installer.exe"
+$output = "xampp-installer.exe"
+Show-AnimatedText "Downloading latest XAMPP installer..." -ForegroundColor Yellow
+Start-BitsTransfer -Source $url -Destination $output
 
-Show-Animation "Fix complete! Thank you for using oAMPP!"
+Show-AnimatedText "Opening Telegram channel..." -ForegroundColor Magenta
+Start-Process "https://t.me/VorTexCyberBD"
+
+Show-AnimatedText "Fix complete! Thank you for using oAMPP!" -ForegroundColor Green
 Read-Host -Prompt "Press Enter to exit"
