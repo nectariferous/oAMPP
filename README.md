@@ -1,6 +1,6 @@
 # oAMPP - Advanced XAMPP UAC and Configuration Solution
 
-![oAMPP Logo](oAMPP_logo.png)
+![oAMPP Logo](https://undsgn.com/wp-content/uploads/2018/03/XAMPP-3.jpg)
 
 oAMPP is an advanced, open-source solution for XAMPP User Account Control (UAC) warnings and configuration issues. Developed by Apache Friends and enhanced by VorTexCyberBD, oAMPP provides a seamless experience for XAMPP users on both Windows and Unix-like systems.
 
