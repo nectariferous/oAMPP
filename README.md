@@ -1,47 +1,31 @@
 # oAMPP - Advanced XAMPP UAC and Configuration Solution
 
-![oAMPP Logo](https://undsgn.com/wp-content/uploads/2018/03/XAMPP-3.jpg)
+![oAMPP Logo](oAMPP_logo.png)
 
-oAMPP is an advanced, open-source solution for XAMPP User Account Control (UAC) warnings and configuration issues. Developed by Apache Friends and enhanced by VorTexCyberBD, oAMPP provides a seamless experience for XAMPP users on both Windows and Unix-like systems.
+oAMPP is an advanced, open-source solution for XAMPP User Account Control (UAC) warnings and configuration issues. Developed by Apache Friends and enhanced by VorTexCyberBD, oAMPP provides a seamless experience for XAMPP users on Windows systems.
 
 ## Features
 
 - 🛡️ Automatically fixes UAC warnings on Windows
-- 🖥️ Optimizes XAMPP configuration on Unix-like systems
-- 🎨 User-friendly interface with animated text and progress bars
-- 🔧 Creates additional tools for manual fixes
-- 📥 Downloads the latest XAMPP installer
-- 🌐 Provides easy access to support channels
+- 🖥️ Modern, user-friendly graphical interface
+- 🎨 Live progress bar for fix application
+- 🌐 Easy access to support channels and GitHub repository
+- 🔔 System tray functionality for quick access
 
 ## Installation
 
-### Windows
-
-1. Clone this repository or download the ZIP file.
-2. Run `Run_oAMPP_UAC_Fix.bat` as administrator.
-3. Follow the on-screen instructions.
-
-### Unix-like Systems
-
-1. Clone this repository or download the ZIP file.
-2. Open a terminal in the oAMPP directory.
-3. Run `chmod +x oAMPP_Unix_Fix.sh`
-4. Execute `./oAMPP_Unix_Fix.sh`
-5. Follow the on-screen instructions.
+1. Download the latest release from the [Releases](https://github.com/nectariferous/oAMPP/releases) page.
+2. Extract the ZIP file to your desired location.
+3. Run `oAMPP_GUI.exe`.
 
 ## Usage
 
-### Windows
+1. Launch `oAMPP_GUI.exe`.
+2. Click the "Fix UAC Issue" button.
+3. Wait for the process to complete.
+4. Restart your computer when prompted.
 
-- The script will automatically check and modify the EnableLUA registry value.
-- A `.reg` file is created for manual registry fixes if needed.
-- The latest XAMPP installer is downloaded for your convenience.
-
-### Unix-like Systems
-
-- The script will check for an existing XAMPP installation and optimize its configuration.
-- Apache will be configured to run on port 8080 to avoid permission issues.
-- The latest XAMPP installer is downloaded for easy installation or upgrading.
+The application will minimize to the system tray for easy access.
 
 ## Support
 
