@@ -3,8 +3,9 @@ import os
 import subprocess
 import winreg
 import requests
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QProgressBar, QLabel, QMessageBox
-from PyQt5.QtGui import QIcon, QPixmap
+from PyQt5.QtWidgets import (QApplication, QMainWindow, QPushButton, QVBoxLayout, QProgressBar, 
+                             QLabel, QMessageBox, QWidget, QHBoxLayout, QSystemTrayIcon, QMenu)
+from PyQt5.QtGui import QIcon, QPixmap, QFont
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
 
 class FixerThread(QThread):
@@ -33,44 +34,71 @@ class FixerThread(QThread):
         
         self.finished.emit()
 
-class OAMPPApp(QWidget):
+class OAMPPApp(QMainWindow):
     def __init__(self):
         super().__init__()
         self.initUI()
 
     def initUI(self):
         self.setWindowTitle('oAMPP - XAMPP UAC Fixer')
-        self.setGeometry(300, 300, 400, 300)
-        self.setWindowIcon(QIcon('oAMPP_logo.png'))
+        self.setGeometry(300, 300, 500, 400)
+        self.setWindowIcon(QIcon('icons/favicon-32x32.png'))
 
-        layout = QVBoxLayout()
+        central_widget = QWidget()
+        self.setCentralWidget(central_widget)
+        layout = QVBoxLayout(central_widget)
 
         # Logo
         logo_label = QLabel()
         pixmap = QPixmap('oAMPP_logo.png')
-        logo_label.setPixmap(pixmap.scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+        logo_label.setPixmap(pixmap.scaled(150, 150, Qt.KeepAspectRatio, Qt.SmoothTransformation))
         logo_label.setAlignment(Qt.AlignCenter)
         layout.addWidget(logo_label)
 
+        # Title
+        title_label = QLabel('oAMPP - XAMPP UAC Fixer')
+        title_label.setAlignment(Qt.AlignCenter)
+        title_label.setFont(QFont('Arial', 16, QFont.Bold))
+        layout.addWidget(title_label)
+
         # Fix button
         self.fix_button = QPushButton('Fix UAC Issue')
+        self.fix_button.setStyleSheet("background-color: #4CAF50; color: white; font-size: 14px; padding: 10px;")
         self.fix_button.clicked.connect(self.start_fix)
         layout.addWidget(self.fix_button)
 
         # Progress bar
         self.progress_bar = QProgressBar()
+        self.progress_bar.setStyleSheet("QProgressBar {border: 2px solid grey; border-radius: 5px; text-align: center;}"
+                                        "QProgressBar::chunk {background-color: #4CAF50;}")
         layout.addWidget(self.progress_bar)
 
         # Social links
-        tg_button = QPushButton('Telegram Channel')
+        social_layout = QHBoxLayout()
+        
+        tg_button = QPushButton('Telegram')
+        tg_button.setIcon(QIcon('icons/telegram_icon.png'))
         tg_button.clicked.connect(lambda: self.open_url('https://t.me/VorTexCyberBD'))
-        layout.addWidget(tg_button)
+        social_layout.addWidget(tg_button)
 
-        git_button = QPushButton('GitHub Repository')
+        git_button = QPushButton('GitHub')
+        git_button.setIcon(QIcon('icons/github_icon.png'))
         git_button.clicked.connect(lambda: self.open_url('https://github.com/nectariferous/oAMPP'))
-        layout.addWidget(git_button)
+        social_layout.addWidget(git_button)
 
-        self.setLayout(layout)
+        layout.addLayout(social_layout)
+
+        # System tray
+        self.tray_icon = QSystemTrayIcon(self)
+        self.tray_icon.setIcon(QIcon('icons/favicon-32x32.png'))
+        
+        tray_menu = QMenu()
+        show_action = tray_menu.addAction("Show")
+        quit_action = tray_menu.addAction("Exit")
+        show_action.triggered.connect(self.show)
+        quit_action.triggered.connect(qApp.quit)
+        self.tray_icon.setContextMenu(tray_menu)
+        self.tray_icon.show()
 
     def start_fix(self):
         self.fix_button.setEnabled(False)
@@ -88,6 +116,16 @@ class OAMPPApp(QWidget):
 
     def open_url(self, url):
         subprocess.run(['start', url], shell=True)
+
+    def closeEvent(self, event):
+        event.ignore()
+        self.hide()
+        self.tray_icon.showMessage(
+            "oAMPP",
+            "Application was minimized to tray",
+            QSystemTrayIcon.Information,
+            2000
+        )
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
