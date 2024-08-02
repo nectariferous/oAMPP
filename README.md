@@ -21,17 +21,6 @@ oAMPP is an advanced, open-source solution for XAMPP User Account Control (UAC) 
 | 🎨 Progress Tracking | Live progress bar for fix application |
 | 🌐 Support Access | Easy access to support channels and GitHub repository |
 | 🔔 System Tray | Functionality for quick access |
-
-## 📊 Performance Comparison
-
-mermaid
-graph TD
-    A[Manual Fix] -->|Time| B(30 minutes)
-    C[oAMPP Fix] -->|Time| D(2 minutes)
-    style A fill:#f9f,stroke:#333,stroke-width:2px
-    style C fill:#bbf,stroke:#333,stroke-width:2px
-
-
     
 ## 🚀 Installation
 
