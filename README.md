@@ -28,29 +28,33 @@ Download the latest release from the Releases page.
 Extract the ZIP file to your desired location.
 Run oAMPP_GUI.exe.
 
-🔧 Usage
-
 Launch oAMPP_GUI.exe.
 Click the "Fix UAC Issue" button.
 Wait for the process to complete.
 Restart your computer when prompted.
 
 The application will minimize to the system tray for easy access.
+
 ## 🤝 Support
 For support and community discussions, join our Telegram channel:
 https://t.me/VorTexCyberBD
+
 ## 👥 Contributing
 We welcome contributions! Please see our Contributing Guide for more details.
+
 ## 📜 License
 This project is licensed under the MIT License. See the LICENSE file for details.
+
 ## ⚠️ Disclaimer
 Modifying system settings and configurations can have security implications. Use this tool at your own risk and only on systems you fully control and understand.
+
 ## 🙏 Acknowledgements
 
 Apache Friends for the original XAMPP package
 VorTexCyberBD for enhancements and support
 
 ## 💖 Sponsor this project
+
 If you find oAMPP useful, consider buying us a coffee:
 ETH: 0x00fC876d03172279E04CC30E5edCE103c3d23C1A
 <a href="https://etherscan.io/address/0x00fC876d03172279E04CC30E5edCE103c3d23C1A">
