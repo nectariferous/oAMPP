@@ -1,18 +1,39 @@
 import sys
 import os
+import platform
+import webbrowser
 import subprocess
-import winreg
 import requests
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QPushButton, QVBoxLayout, QProgressBar, 
                              QLabel, QMessageBox, QWidget, QHBoxLayout, QSystemTrayIcon, QMenu)
 from PyQt5.QtGui import QIcon, QPixmap, QFont
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
 
+# Conditional import for Windows-specific modules
+if platform.system() == 'Windows':
+    import winreg
+else:
+    winreg = None
+
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
+
 class FixerThread(QThread):
     progress = pyqtSignal(int)
     finished = pyqtSignal()
 
     def run(self):
+        if platform.system() != 'Windows':
+            self.progress.emit(100)
+            self.finished.emit()
+            return
+
         try:
             key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System", 0, winreg.KEY_ALL_ACCESS)
             current_value, _ = winreg.QueryValueEx(key, "EnableLUA")
@@ -42,7 +63,7 @@ class OAMPPApp(QMainWindow):
     def initUI(self):
         self.setWindowTitle('oAMPP - XAMPP UAC Fixer')
         self.setGeometry(300, 300, 500, 400)
-        self.setWindowIcon(QIcon('icons/favicon-32x32.png'))
+        self.setWindowIcon(QIcon(resource_path('icons/favicon-32x32.png')))
 
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
@@ -50,7 +71,7 @@ class OAMPPApp(QMainWindow):
 
         # Logo
         logo_label = QLabel()
-        pixmap = QPixmap('oAMPP_logo.png')
+        pixmap = QPixmap(resource_path('oAMPP_logo.png'))
         logo_label.setPixmap(pixmap.scaled(150, 150, Qt.KeepAspectRatio, Qt.SmoothTransformation))
         logo_label.setAlignment(Qt.AlignCenter)
         layout.addWidget(logo_label)
@@ -77,12 +98,12 @@ class OAMPPApp(QMainWindow):
         social_layout = QHBoxLayout()
         
         tg_button = QPushButton('Telegram')
-        tg_button.setIcon(QIcon('icons/telegram_icon.png'))
+        tg_button.setIcon(QIcon(resource_path('icons/telegram_icon.png')))
         tg_button.clicked.connect(lambda: self.open_url('https://t.me/VorTexCyberBD'))
         social_layout.addWidget(tg_button)
 
         git_button = QPushButton('GitHub')
-        git_button.setIcon(QIcon('icons/github_icon.png'))
+        git_button.setIcon(QIcon(resource_path('icons/github_icon.png')))
         git_button.clicked.connect(lambda: self.open_url('https://github.com/nectariferous/oAMPP'))
         social_layout.addWidget(git_button)
 
@@ -90,13 +111,13 @@ class OAMPPApp(QMainWindow):
 
         # System tray
         self.tray_icon = QSystemTrayIcon(self)
-        self.tray_icon.setIcon(QIcon('icons/favicon-32x32.png'))
+        self.tray_icon.setIcon(QIcon(resource_path('icons/favicon-32x32.png')))
         
         tray_menu = QMenu()
         show_action = tray_menu.addAction("Show")
         quit_action = tray_menu.addAction("Exit")
         show_action.triggered.connect(self.show)
-        quit_action.triggered.connect(qApp.quit)
+        quit_action.triggered.connect(QApplication.instance().quit)
         self.tray_icon.setContextMenu(tray_menu)
         self.tray_icon.show()
 
@@ -115,7 +136,23 @@ class OAMPPApp(QMainWindow):
         QMessageBox.information(self, 'Fix Complete', 'UAC issue has been fixed. Please restart your computer for changes to take effect.')
 
     def open_url(self, url):
-        subprocess.run(['start', url], shell=True)
+        try:
+            webbrowser.open(url)
+        except Exception as e:
+            print(f"Error opening URL: {e}")
+            self.fallback_open_url(url)
+
+    def fallback_open_url(self, url):
+        try:
+            if platform.system() == 'Windows':
+                os.startfile(url)
+            elif platform.system() == 'Darwin':  # macOS
+                subprocess.Popen(['open', url])
+            else:  # Linux and others
+                subprocess.Popen(['xdg-open', url])
+        except Exception as e:
+            print(f"Fallback error opening URL: {e}")
+            QMessageBox.warning(self, 'Error', f'Unable to open URL: {url}')
 
     def closeEvent(self, event):
         event.ignore()
@@ -127,8 +164,11 @@ class OAMPPApp(QMainWindow):
             2000
         )
 
-if __name__ == '__main__':
+def main():
     app = QApplication(sys.argv)
     ex = OAMPPApp()
     ex.show()
     sys.exit(app.exec_())
+
+if __name__ == '__main__':
+    main()
